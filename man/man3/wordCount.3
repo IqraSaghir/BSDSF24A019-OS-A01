@@ -1,0 +1,34 @@
+.TH WORDCOUNT 3 "September 2026" "libmyutils" "Library Functions"
+
+.SH NAME
+wordCount \- count lines, words, and characters in a file
+
+.SH SYNOPSIS
+.B #include <stdio.h>
+.br
+.B #include "myfilefunctions.h"
+.sp
+.B int wordCount(FILE *file, int *lines, int *words, int *chars);
+
+.SH DESCRIPTION
+The
+.B wordCount
+function reads the contents of the file pointed to by
+.BR file
+and counts the number of lines, words, and characters.
+
+The calculated values are stored in the variables pointed to by
+.BR lines ,
+.BR words ,
+and
+.BR chars .
+
+A word is identified as a sequence of characters separated by spaces,
+newlines, or tab characters.
+
+The function returns 0 when the operation is successful. It returns -1
+if any of the input pointers is NULL.
+
+.SH AUTHOR
+Iqra Saghir
+iqra32388@gmail.com

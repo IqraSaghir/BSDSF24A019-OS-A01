@@ -1,0 +1,26 @@
+.TH MYSTRNCPY 3 "September 2026" "libmyutils" "Library Functions"
+
+.SH NAME
+mystrncpy \- copy up to a specified number of characters
+
+.SH SYNOPSIS
+.B #include "mystrfunctions.h"
+.sp
+.B int mystrncpy(char *dest, const char *src, int n);
+
+.SH DESCRIPTION
+The
+.B mystrncpy
+function copies characters from the string pointed to by
+.BR src
+into the character array pointed to by
+.BR dest .
+The function copies at most
+.B n
+characters or stops when the terminating null character is reached.
+A terminating null character is added to
+.BR dest .
+
+.SH AUTHOR
+Iqra Saghir
+iqra32388@gmail.com

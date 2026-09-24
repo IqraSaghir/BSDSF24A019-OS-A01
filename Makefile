@@ -1,3 +1,6 @@
+PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+MANDIR = $(PREFIX)/share/man/man3
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude
 PICFLAGS = -fPIC
@@ -34,3 +37,10 @@ obj/myfilefunctions.o: src/myfilefunctions.c
 
 clean:
 	rm -f obj/*.o lib/libmyutils.a lib/libmyutils.so bin/client_static bin/client_dynamic
+install: $(STATIC_TARGET)
+	mkdir -p $(BINDIR)
+	mkdir -p $(MANDIR)
+	install -m 755 $(STATIC_TARGET) $(BINDIR)/client
+	install -m 644 man/man3/*.3 $(MANDIR)/
+
+.PHONY: clean install
