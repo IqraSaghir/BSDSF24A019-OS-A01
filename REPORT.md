@@ -87,3 +87,36 @@ When we ran `nm` on `bin/client_static`, the symbols for `wordCount` and `mygrep
 However, `mystrlen` was not shown because `main.c` does not call `mystrlen()`.
 
 This demonstrates that during static linking, the linker includes the required code from the static library in the final executable. Functions that are not required by the program do not necessarily appear in the final executable.
+## Feature 4: Dynamic Library Build
+
+### 1. What is Position-Independent Code (-fPIC) and why is it a fundamental requirement for creating shared libraries?
+
+Position-Independent Code (PIC) is code that can execute correctly regardless of the memory address where it is loaded. Shared libraries can be loaded at different memory addresses by different processes, so they need to be position-independent.
+
+In this project, we used the `-fPIC` option when compiling `mystrfunctions.c` and `myfilefunctions.c`. This made their object files suitable for creating the shared library `libmyutils.so`.
+
+### 2. Explain the difference in file size between your static and dynamic clients. Why does this difference exist?
+
+Our static client `bin/client_static` was 17K, while the dynamic client `bin/client_dynamic` was 16K.
+
+The static executable is larger because the required library code is copied into the executable during static linking. In dynamic linking, the library code remains in the separate `libmyutils.so` file and is loaded when the program runs.
+
+The difference is small in our project because the library and program are both small.
+
+### 3. What is the LD_LIBRARY_PATH environment variable? Why was it necessary to set it for your program to run, and what does this tell you about the responsibilities of the operating system's dynamic loader?
+
+`LD_LIBRARY_PATH` is an environment variable that tells the dynamic loader which additional directories to search for shared libraries.
+
+We used:
+
+`export LD_LIBRARY_PATH=./lib`
+
+because our `libmyutils.so` was stored inside the project's `lib` directory, which was not one of the system's normal library search locations.
+
+Before setting it, `./bin/client_dynamic` could not find `libmyutils.so`. After setting it, the program ran successfully.
+
+The command `ldd bin/client_dynamic` confirmed:
+
+`libmyutils.so => ./lib/libmyutils.so`
+
+This shows that the dynamic loader is responsible for finding and loading the shared libraries required by a dynamically linked program.
