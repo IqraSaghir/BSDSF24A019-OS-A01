@@ -35,3 +35,55 @@ A GitHub Release provides a way to publish a specific version of a project based
 Attaching a binary such as `client` allows users to obtain the already-compiled executable directly instead of compiling the source code themselves.
 
 For this project, the `v0.1.1-multifile` release includes the compiled `client` executable produced from the multi-file C project.
+## Feature 3: Static Library Build
+
+### 1. Compare the Makefile from Part 2 and Part 3. What are the key differences in the variables and rules that enable the creation of a static library?
+
+In Part 2, the object files for the main program and utility functions were directly linked together to create the executable.
+
+The Makefile used:
+
+- `OBJECTS = obj/main.o obj/mystrfunctions.o obj/myfilefunctions.o`
+- `$(CC) $(OBJECTS) -o $(TARGET)`
+
+In Part 3, the utility object files are first combined into a static library.
+
+The Makefile introduces:
+
+- `LIBRARY = lib/libmyutils.a`
+- `MAIN_OBJECT = obj/main.o`
+- `LIB_OBJECTS = obj/mystrfunctions.o obj/myfilefunctions.o`
+
+The following rule creates the static library:
+
+`$(LIBRARY): $(LIB_OBJECTS)`
+
+`ar rcs $(LIBRARY) $(LIB_OBJECTS)`
+
+The final executable is then linked with the main object file and the static library:
+
+`$(TARGET): $(MAIN_OBJECT) $(LIBRARY)`
+
+`$(CC) $(MAIN_OBJECT) $(LIBRARY) -o $(TARGET)`
+
+Therefore, Part 2 directly links all object files, while Part 3 first packages the utility object files into `libmyutils.a` and then links the main program against that library.
+
+### 2. What is the purpose of the ar command? Why is ranlib often used immediately after it?
+
+The `ar` command is used to create and modify archive files. In this project, it combines `mystrfunctions.o` and `myfilefunctions.o` into the static library `lib/libmyutils.a`.
+
+The command used in our Makefile is:
+
+`ar rcs lib/libmyutils.a obj/mystrfunctions.o obj/myfilefunctions.o`
+
+The `ranlib` command creates or updates the symbol index of a static library. This index helps the linker find symbols inside the library efficiently.
+
+In modern GNU `ar`, the `s` option in `ar rcs` creates the symbol index automatically, so a separate `ranlib` command was not required in our Makefile.
+
+### 3. When you run nm on your client_static executable, are the symbols for functions like mystrlen present? What does this tell you about how static linking works?
+
+When we ran `nm` on `bin/client_static`, the symbols for `wordCount` and `mygrep` were present because these functions are used by `main.c`.
+
+However, `mystrlen` was not shown because `main.c` does not call `mystrlen()`.
+
+This demonstrates that during static linking, the linker includes the required code from the static library in the final executable. Functions that are not required by the program do not necessarily appear in the final executable.
